@@ -13,15 +13,25 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Custom CSS
+# CSS – HARD RESET
 # -----------------------------
 st.markdown(
     """
     <style>
-    /* Remove default padding */
+    /* Hide Streamlit header & footer */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+
+    /* Remove ALL padding */
     .block-container {
-        padding-top: 0rem;
-        padding-bottom: 0rem;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Full viewport */
+    html, body, [class*="css"]  {
+        height: 100%;
+        overflow: hidden;
     }
 
     /* Background */
@@ -32,9 +42,9 @@ st.markdown(
         background-repeat: no-repeat;
     }
 
-    /* Center everything */
-    .center-container {
-        min-height: 100vh;
+    /* Center container */
+    .center {
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -42,59 +52,46 @@ st.markdown(
 
     /* Glass card */
     .card {
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        padding: 40px;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(14px);
+        padding: 36px;
         border-radius: 16px;
-        width: 100%;
+        width: 90%;
         max-width: 620px;
         color: white;
-        box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.8);
         border: 1px solid rgba(255,255,255,0.15);
     }
 
-    /* Text area */
     textarea {
-        background-color: #121212 !important;
+        background-color: #111 !important;
         color: white !important;
         border-radius: 8px !important;
     }
 
-    /* Neon button */
+    /* Button */
     div.stButton > button {
-        background-color: #111827;
-        color: #ffffff;
+        background-color: #0f172a;
+        color: white;
         border: 1px solid #3b82f6;
         border-radius: 8px;
-        padding: 0.6em 1.5em;
-        transition: all 0.3s ease;
-        box-shadow: 0 0 10px rgba(59,130,246,0.4);
+        padding: 0.6em 1.6em;
+        transition: 0.3s;
+        box-shadow: 0 0 12px rgba(59,130,246,0.5);
     }
 
     div.stButton > button:hover {
         background-color: #2563eb;
-        color: white;
-        box-shadow: 0 0 20px rgba(59,130,246,0.9);
-        transform: translateY(-1px);
+        box-shadow: 0 0 25px rgba(59,130,246,1);
+        transform: translateY(-2px);
     }
 
-    /* Footer */
-    .footer {
-        margin-top: 25px;
+    .footer-text {
+        margin-top: 18px;
         font-size: 0.85rem;
-        color: #cbd5f5;
+        color: #c7d2fe;
         text-align: center;
-        opacity: 0.9;
-    }
-
-    .footer a {
-        color: #60a5fa;
-        text-decoration: none;
-    }
-
-    .footer a:hover {
-        text-decoration: underline;
+        opacity: 0.85;
     }
     </style>
     """,
@@ -102,7 +99,7 @@ st.markdown(
 )
 
 # -----------------------------
-# Load & train model
+# Model
 # -----------------------------
 data = pd.read_csv("spam.csv", encoding="latin-1")
 data = data[["v1", "v2"]]
@@ -120,38 +117,31 @@ model.fit(X, y)
 # -----------------------------
 # UI
 # -----------------------------
-st.markdown("<div class='center-container'>", unsafe_allow_html=True)
+st.markdown("<div class='center'>", unsafe_allow_html=True)
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 
 st.title("SMS Spam Detection")
 st.write(
-    "This application uses Machine Learning to determine whether an SMS message is **Spam** or **Ham (Not Spam)**."
+    "This application uses Machine Learning to classify SMS messages as **Spam** or **Ham (Not Spam)**."
 )
 
-user_input = st.text_area("Enter an SMS message:")
+message = st.text_area("Enter an SMS message:")
 
 if st.button("Predict"):
-    if user_input.strip() == "":
+    if message.strip() == "":
         st.warning("Please enter a message.")
     else:
-        input_vector = vectorizer.transform([user_input])
-        prediction = model.predict(input_vector)[0]
-
+        prediction = model.predict(vectorizer.transform([message]))[0]
         if prediction == "spam":
-            st.error("🚨 This message is classified as SPAM.")
+            st.error("🚨 This message is SPAM.")
         else:
-            st.success("✅ This message is classified as HAM (Not Spam).")
+            st.success("✅ This message is HAM (Not Spam).")
 
-# -----------------------------
-# Footer (Verification)
-# -----------------------------
 st.markdown(
     """
-    <div class="footer">
+    <div class="footer-text">
         Project by <b>Amit Sharma</b><br>
-        GitHub: <a href="https://github.com/amitx2209/SMS-Spam-Detection" target="_blank">
-        SMS Spam Detection Repository</a><br>
-        Streamlit App: <i>Use this page to verify live deployment</i>
+        GitHub: https://github.com/amitx2209/SMS-Spam-Detection
     </div>
     """,
     unsafe_allow_html=True
