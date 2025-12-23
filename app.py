@@ -1,5 +1,15 @@
 import streamlit as st
+import pandas as pd
+from sklearn.naive_bayes import MultinomialNB
+from features import get_vectorizer
 
+# Page configuration
+st.set_page_config(
+    page_title="SMS Spam Detection",
+    layout="centered"
+)
+
+# Background image styling
 st.markdown(
     """
     <style>
@@ -9,16 +19,17 @@ st.markdown(
         background-position: center;
         background-repeat: no-repeat;
     }
+
+    .content-box {
+        background-color: rgba(255, 255, 255, 0.92);
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
-
-
-import streamlit as st
-from sklearn.naive_bayes import MultinomialNB
-from features import get_vectorizer
-import pandas as pd
 
 # Load dataset and train model
 data = pd.read_csv("spam.csv", encoding="latin-1")
@@ -34,11 +45,13 @@ X = vectorizer.fit_transform(X_text)
 model = MultinomialNB()
 model.fit(X, y)
 
-# Streamlit interface
-st.title("SMS Spam Detection")
-st.write("Enter an SMS message and check if it's SPAM or HAM.")
+# App UI
+st.markdown('<div class="content-box">', unsafe_allow_html=True)
 
-user_input = st.text_area("Your SMS here:")
+st.title("SMS Spam Detection")
+st.write("Enter an SMS message below to check whether it is spam or not.")
+
+user_input = st.text_area("Your SMS message:")
 
 if st.button("Predict"):
     if user_input.strip() == "":
@@ -46,7 +59,10 @@ if st.button("Predict"):
     else:
         input_vector = vectorizer.transform([user_input])
         prediction = model.predict(input_vector)[0]
+
         if prediction == "spam":
-            st.error("🚨 SPAM")
+            st.error("🚨 This message is SPAM")
         else:
-            st.success("✅ HAM")
+            st.success("✅ This message is NOT SPAM")
+
+st.markdown("</div>", unsafe_allow_html=True)
