@@ -1,88 +1,124 @@
-\# SMS Spam Detection
+SMS Spam Detection
 
 
 
-This project is a Machine Learning application that detects whether an SMS message is \*\*Spam\*\* or \*\*Ham (Not Spam)\*\*.
+This project is a Python-based machine learning application that can detect whether an SMS message is Spam or Ham (Not Spam). It demonstrates how machine learning can help filter unwanted messages and protect users from spam.
 
 
 
----
+Technologies used:
 
 
 
-\## 📌 Technologies Used
+Python for programming and data manipulation
 
-\- Python
+Pandas for handling datasets
 
-\- Pandas
+Scikit-learn for machine learning algorithms
 
-\- Scikit-learn
+TF-IDF Vectorizer for converting text into numerical features
 
-\- TF-IDF Vectorizer
-
-\- Naive Bayes Classifier
+Naive Bayes Classifier for training the spam detection model
 
 
 
----
+Dataset:
 
 
 
-\## 📊 Dataset
-
-\- SMS Spam Collection Dataset
-
-\- Contains 5,572 SMS messages
-
-\- Labels: `spam` and `ham`
+The project uses the SMS Spam Collection Dataset, which contains 5,572 SMS messages labeled as spam or ham. This dataset is publicly available and widely used for spam detection projects.
 
 
 
----
+Project workflow:
 
 
 
-\## ⚙️ Project Workflow
-
-1\. Data loading and cleaning
-
-2\. Text preprocessing
-
-3\. Feature extraction using TF-IDF
-
-4\. Model training using Naive Bayes
-
-5\. Model evaluation
-
-6\. Predicting new SMS messages
+Data loading and cleaning – load the dataset and remove missing or irrelevant entries.
 
 
 
----
+Text preprocessing – clean the text by removing punctuation, stopwords, and normalizing the messages.
 
 
 
-\## ✅ Model Performance
-
-\- Accuracy: \*\*~97%\*\*
-
-\- High precision and recall for spam detection
+Feature extraction – convert messages into numerical features using TF-IDF.
 
 
 
----
+Model training – train a Naive Bayes classifier to detect spam messages.
 
 
 
-\## ▶️ How to Run the Project
+Model evaluation – measure accuracy, precision, and recall to check performance.
+
+
+
+Predicting new messages – test the model on new SMS messages through a Streamlit web app.
+
+
+
+Model performance:
+
+
+
+Accuracy: approximately 97%
+
+Spam detection: high precision and recall
+
+The model performs well in distinguishing spam from ham messages.
+
+
+
+How to run the project:
+
+
+
+Clone the repository:
+
+
+
+git clone https://github.com/your-username/SMS-Spam-Detection.git
+
+cd SMS-Spam-Detection
+
+
 
 
 
 Install required libraries:
 
-```bash
-
-pip install pandas scikit-learn
 
 
+pip install pandas scikit-learn streamlit
+
+
+
+
+
+Run the Streamlit web app:
+
+
+
+python -m streamlit run app.py
+
+
+
+
+
+Enter an SMS message in the browser and click Predict to see whether it is spam or ham.
+
+
+
+Contributors:
+
+
+
+Amit Sharma – SMS Spam Detection project and Streamlit App
+
+Add other contributors here if needed
+
+
+
+Built with Python, scikit-learn, and Streamlit.
 
