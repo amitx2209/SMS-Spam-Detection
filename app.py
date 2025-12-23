@@ -1,4 +1,21 @@
 import streamlit as st
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://img.freepik.com/free-vector/network-mesh-wire-digital-technology-background_1017-27428.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+import streamlit as st
 from sklearn.naive_bayes import MultinomialNB
 from features import get_vectorizer
 import pandas as pd
