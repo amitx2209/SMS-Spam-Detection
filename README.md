@@ -122,3 +122,17 @@ Add other contributors here if needed
 
 Built with Python, scikit-learn, and Streamlit.
 
+
+
+Live Demo
+
+
+
+You can try the SMS Spam Detection app live here: \[Open the app](https://sms-spam-detection-amitx2209.streamlit.app/)
+
+Try the app online! Enter any SMS message and see if it is classified as Spam or Ham in real-time.
+
+
+
+
+
