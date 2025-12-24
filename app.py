@@ -10,6 +10,7 @@ from features import get_vectorizer
 # -------------------------------------------------
 st.set_page_config(
     page_title="SMS Spam Detection",
+    page_icon="smslogo.jpeg",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
