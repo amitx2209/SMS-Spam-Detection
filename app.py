@@ -1,147 +1,209 @@
 import streamlit as st
 import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 from features import get_vectorizer
 
-# -----------------------------
-# Page config
-# -----------------------------
+# -------------------------------------------------
+# Page configuration
+# -------------------------------------------------
 st.set_page_config(
     page_title="SMS Spam Detection",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# -----------------------------
-# CSS – HARD RESET
-# -----------------------------
+# -------------------------------------------------
+# Minimal dark UI (no image, no scroll)
+# -------------------------------------------------
 st.markdown(
     """
     <style>
-    /* Hide Streamlit header & footer */
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
+    header, footer {visibility: hidden;}
 
-    /* Remove ALL padding */
-    .block-container {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* Full viewport */
-    html, body, [class*="css"]  {
+    html, body {
         height: 100%;
+        background-color: #0b0f14;
         overflow: hidden;
     }
 
-    /* Background */
-    .stApp {
-        background-image: url("https://png.pngtree.com/thumb_back/fw800/background/20250828/pngtree-wireframe-mesh-with-glowing-nodes-on-dark-background-futuristic-digital-network-image_18256772.webp");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+    .block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
     }
 
-    /* Center container */
     .center {
         height: 100vh;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
     }
 
-    /* Glass card */
     .card {
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: blur(14px);
-        padding: 36px;
-        border-radius: 16px;
-        width: 90%;
-        max-width: 620px;
-        color: white;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-        border: 1px solid rgba(255,255,255,0.15);
+        background-color: #111827;
+        padding: 28px 32px;
+        border-radius: 14px;
+        width: 100%;
+        max-width: 520px;
+        color: #e5e7eb;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+        border: 1px solid rgba(255,255,255,0.08);
     }
 
     textarea {
-        background-color: #111 !important;
-        color: white !important;
+        background-color: #020617 !important;
+        color: #e5e7eb !important;
         border-radius: 8px !important;
+        border: 1px solid #1f2937 !important;
     }
 
-    /* Button */
     div.stButton > button {
-        background-color: #0f172a;
-        color: white;
-        border: 1px solid #3b82f6;
+        width: 100%;
+        background-color: #020617;
+        color: #e5e7eb;
+        border: 1px solid #2563eb;
         border-radius: 8px;
-        padding: 0.6em 1.6em;
-        transition: 0.3s;
-        box-shadow: 0 0 12px rgba(59,130,246,0.5);
+        padding: 0.6em;
+        font-size: 1rem;
     }
 
     div.stButton > button:hover {
-        background-color: #2563eb;
-        box-shadow: 0 0 25px rgba(59,130,246,1);
-        transform: translateY(-2px);
+        background-color: #1e3a8a;
     }
 
-    .footer-text {
-        margin-top: 18px;
+    .meta {
         font-size: 0.85rem;
-        color: #c7d2fe;
+        color: #9ca3af;
+        margin-top: 12px;
         text-align: center;
-        opacity: 0.85;
+    }
+
+    /* Media query for mobile screens */
+    @media (max-width: 480px) {
+        .card {
+            padding: 16px 12px;
+        }
+        h1, h2, h3, .stMarkdown {
+            font-size: 0.95rem !important;
+        }
+        div.stButton > button {
+            font-size: 0.9rem !important;
+            padding: 0.45em;
+        }
+        textarea {
+            height: 100px !important;
+        }
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+    
+# -------------------------------------------------
+# Safe model loading & training
+# -------------------------------------------------
+@st.cache_resource
+def load_model():
+    try:
+        data = pd.read_csv("spam.csv", encoding="latin-1")
+        data = data[["v1", "v2"]]
+        data.columns = ["label", "message"]
 
-# -----------------------------
-# Model
-# -----------------------------
-data = pd.read_csv("spam.csv", encoding="latin-1")
-data = data[["v1", "v2"]]
-data.columns = ["label", "message"]
+        X_train, X_test, y_train, y_test = train_test_split(
+            data["message"], data["label"], test_size=0.25, random_state=42
+        )
 
-X_text = data["message"]
-y = data["label"]
+        vectorizer = get_vectorizer()
+        X_train_vec = vectorizer.fit_transform(X_train)
+        X_test_vec = vectorizer.transform(X_test)
 
-vectorizer = get_vectorizer()
-X = vectorizer.fit_transform(X_text)
+        model = MultinomialNB()
+        model.fit(X_train_vec, y_train)
 
-model = MultinomialNB()
-model.fit(X, y)
+        accuracy = accuracy_score(y_test, model.predict(X_test_vec))
+        return model, vectorizer, accuracy
 
-# -----------------------------
+    except Exception:
+        return None, None, None
+
+
+model, vectorizer, accuracy = load_model()
+
+# -------------------------------------------------
 # UI
-# -----------------------------
+# -------------------------------------------------
 st.markdown("<div class='center'>", unsafe_allow_html=True)
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 
 st.title("SMS Spam Detection")
 st.write(
-    "This application uses Machine Learning to classify SMS messages as **Spam** or **Ham (Not Spam)**."
+    "This application uses a Machine Learning model to classify SMS messages "
+    "as **Spam** or **Ham (Not Spam)**."
 )
 
-message = st.text_area("Enter an SMS message:")
+message = st.text_area("Enter an SMS message", height=120)
 
-if st.button("Predict"):
-    if message.strip() == "":
-        st.warning("Please enter a message.")
+# Add JS to select all text when the textarea is clicked or focused
+st.markdown(
+    """
+    <script>
+    const textarea = window.parent.document.querySelector('textarea[key="sms_input"]');
+    if(textarea){
+        textarea.addEventListener('focus', function() {
+            this.select();
+        });
+        textarea.addEventListener('click', function() {
+            this.select();
+        });
+    }
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+
+predict_clicked = st.button(
+    "Predict"
+)
+
+if predict_clicked and model is not None:
+    with st.spinner("Analyzing message..."):
+        input_vector = vectorizer.transform([message])
+        prediction = model.predict(input_vector)[0]
+        confidence = max(model.predict_proba(input_vector)[0]) * 100
+
+    if prediction == "spam":
+        st.error(f" 🚨 Prediction: SPAM \n       📊 Confidence: {confidence:.2f}%")
+        bar_color = "#dc2626"  # Tailwind red-600
     else:
-        prediction = model.predict(vectorizer.transform([message]))[0]
-        if prediction == "spam":
-            st.error("🚨 This message is SPAM.")
-        else:
-            st.success("✅ This message is HAM (Not Spam).")
+        st.success(f" ✅ Prediction: HAM (Not Spam) \n       📊 Confidence: {confidence:.2f}%")
+        bar_color = "#16a34a"  # Tailwind green-600
+
+  # Custom colored confidence bar
+    st.markdown(f"""
+    <div style="background-color:#1f2937; border-radius:8px; padding:2px; width:100%;">
+        <div style="background-color:{bar_color}; width:{confidence}%; padding:6px; border-radius:6px; text-align:right; color:#ffffff; font-weight:bold;">
+            {confidence:.2f}%
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# -------------------------------------------------
+# Model info (verification-friendly)
+# -------------------------------------------------
+st.markdown("---")
+st.subheader("Model Information")
+st.write(f"- Algorithm: Multinomial Naive Bayes")
+st.write(f"- Vectorization: TF-IDF")
+st.write(f"- Dataset size: 5,572 SMS messages")
+st.write(f"- Test accuracy: **{accuracy:.4f}**")
 
 st.markdown(
     """
-    <div class="footer-text">
-        Project by <b>Amit Sharma</b><br>
-        GitHub: https://github.com/amitx2209/SMS-Spam-Detection
+    <div class="meta">
+        Developed by Amit Sharma<br>
+        Verified via Streamlit Cloud deployment
     </div>
     """,
     unsafe_allow_html=True
