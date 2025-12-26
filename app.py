@@ -24,9 +24,24 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+
+st.markdown("☰ **Menu** → Open sidebar for model details")
+
 # -------------------------------------------------
 # Sidebar controls
 # -------------------------------------------------
+
+with st.sidebar:
+    st.title("ℹ️ Model Information")
+    st.markdown(
+        """
+        • **Deployed Model:** Multinomial Naive Bayes  
+        • **Experimented Models:** Logistic Regression, SVM, Random Forest  
+        • **Deployment Rationale:** Low inference time and reliable performance
+        """
+    )
+
+
 st.sidebar.title("ℹ️ Project Information")
 
 st.sidebar.subheader("Dataset")
