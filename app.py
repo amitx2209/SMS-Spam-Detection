@@ -81,6 +81,42 @@ st.sidebar.write("""
 
 
 
+import numpy as np
+
+def get_colored_contributing_words(message, vectorizer, model, top_n=5):
+    vector = vectorizer.transform([message])
+
+    if vector.nnz == 0:
+        return []
+
+    feature_names = np.array(vectorizer.get_feature_names_out())
+    indices = vector.nonzero()[1]
+    weights = vector.data
+
+    # Get log probabilities from Naive Bayes
+    spam_log_probs = model.feature_log_prob_[model.classes_ == "spam"][0]
+    ham_log_probs = model.feature_log_prob_[model.classes_ == "ham"][0]
+
+    word_info = []
+
+    for idx, weight in zip(indices, weights):
+        word = feature_names[idx]
+
+        if spam_log_probs[idx] > ham_log_probs[idx]:
+            color = "red"
+            label = "spam-leaning"
+        else:
+            color = "green"
+            label = "ham-leaning"
+
+        word_info.append((word, weight, color, label))
+
+    # Sort by TF-IDF weight
+    word_info = sorted(word_info, key=lambda x: x[1], reverse=True)
+
+    return word_info[:top_n]
+
+
 
 
 # -------------------------------------------------
@@ -221,43 +257,53 @@ predict_clicked = st.button(
     "Predict"
 )
 
-if predict_clicked and model is not None:
-    with st.spinner("Analyzing message..."):
-        input_vector = vectorizer.transform([message])
-        prediction = model.predict(input_vector)[0]
-        confidence = max(model.predict_proba(input_vector)[0]) * 100
+if predict_clicked:
 
     # -------------------------------
-    # Show prediction result
+    # Empty message handling
     # -------------------------------
-    if prediction == "spam":
-        st.error(f" 🚨 Prediction: SPAM \n       📊 Confidence: {confidence:.2f}%")
-        bar_color = "#dc2626"
-    else:
-        st.success(f" ✅ Prediction: HAM (Not Spam) \n       📊 Confidence: {confidence:.2f}%")
-        bar_color = "#16a34a"
+    if message.strip() == "":
+        st.warning("⚠️ Please enter an SMS message to analyze.")
 
-    # -------------------------------
-    # Confidence bar
-    # -------------------------------
-    st.markdown(f"""
-    <div style="background-color:#1f2937; border-radius:8px; padding:2px; width:100%;">
-        <div style="background-color:{bar_color}; width:{confidence}%; padding:6px;
-                    border-radius:6px; text-align:right; color:#ffffff; font-weight:bold;">
-            {confidence:.2f}%
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    elif model is not None:
+        with st.spinner("Analyzing message..."):
+            input_vector = vectorizer.transform([message])
+            prediction = model.predict(input_vector)[0]
+            confidence = max(model.predict_proba(input_vector)[0]) * 100
 
-    # -------------------------------
-    # Confidence interpretation
-    # -------------------------------
-    if confidence >= 80:
-        st.success("🔍 High confidence prediction – the model is very certain.")
-    elif confidence >= 60:
-        st.info("🔍 Moderate confidence prediction – the model is fairly confident.")
-    else:
-        st.warning("🔍 Low confidence prediction – the message may be ambiguous.")
+        # -------------------------------
+        # Prediction result
+        # -------------------------------
+        if prediction == "spam":
+            st.error("🚨 Prediction: SPAM")
+        else:
+            st.success("✅ Prediction: HAM (Not Spam)")
+
+        # -------------------------------
+        # Confidence indicator
+        # -------------------------------
+        if confidence >= 80:
+            st.success(f"🟢 High confidence ({confidence:.2f}%)")
+        elif confidence >= 60:
+            st.info(f"🟡 Medium confidence ({confidence:.2f}%)")
+        else:
+            st.warning(f"🔴 Low confidence ({confidence:.2f}%)")
+
+        # -------------------------------
+        # Color-coded contributing words
+        # -------------------------------
+        words = get_colored_contributing_words(message, vectorizer, model)
+
+        if words:
+            st.markdown("**Top contributing words:**")
+            for word, weight, color, label in words:
+                st.markdown(
+                    f"<span style='color:{color}; font-weight:bold'>{word}</span> "
+                    f"<span style='color:gray; font-size:0.85em'>({label})</span>",
+                    unsafe_allow_html=True
+                )
+
+
 
 
 
