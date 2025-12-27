@@ -300,7 +300,7 @@ This project was developed as a collaborative academic effort.
 
 📄 Full contributor details are available here:  
 
-➡️ \[CONTRIBUTORS.md](CONTRIBUTORS.md)
+➡️ \[CONTRIBUTORS.md](./CONTRIBUTORS.md)
 
 
 
