@@ -290,6 +290,24 @@ These tokens are derived from learned TF-IDF weights and Naive Bayes feature pro
 
 
 
+\## 👥 Contributors
+
+
+
+This project was developed as a collaborative academic effort.
+
+
+
+📄 Full contributor details are available here:  
+
+➡️ \[CONTRIBUTORS.md](CONTRIBUTORS.md)
+
+
+
+---
+
+
+
 \## 🛠 How to Run the Project Locally
 
 
