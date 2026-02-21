@@ -1,4 +1,4 @@
-
+  
 import pickle
 import numpy as np
 import streamlit as st
@@ -14,9 +14,8 @@ def tokens_to_dataframe(tokens, label):
 
 
 
-# -------------------------------------------------
 # Page configuration
-# -------------------------------------------------
+
 st.set_page_config(
     page_title="SMS Spam Detection",
     page_icon="smslogo.jpeg",
@@ -27,9 +26,7 @@ st.set_page_config(
 
 st.markdown("☰ **Menu** → Open sidebar for model details")
 
-# -------------------------------------------------
-# Sidebar controls
-# -------------------------------------------------
+# Sidebar control
 
 with st.sidebar:
     st.title("ℹ️ Model Information")
@@ -119,9 +116,8 @@ def get_colored_contributing_words(message, vectorizer, model, top_n=5):
 
 
 
-# -------------------------------------------------
-# Minimal dark UI (no image, no scroll)
-# -------------------------------------------------
+# Minimal dark UI
+
 st.markdown(
     """
     <style>
@@ -165,9 +161,7 @@ st.markdown(
 
 
     
-# -------------------------------------------------
 # Safe model loading & training
-# -------------------------------------------------
 
 
 
@@ -212,9 +206,8 @@ st.sidebar.bar_chart(
 
 
 
-# -------------------------------------------------
 # UI
-# -------------------------------------------------
+
 st.markdown("<div class='center'>", unsafe_allow_html=True)
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 
@@ -235,6 +228,7 @@ st.write("""
 message = st.text_area("Enter an SMS message", height=120)
 
 # Add JS to select all text when the textarea is clicked or focused
+
 st.markdown(
     """
     <script>
@@ -259,9 +253,8 @@ predict_clicked = st.button(
 
 if predict_clicked:
 
-    # -------------------------------
     # Empty message handling
-    # -------------------------------
+
     if message.strip() == "":
         st.warning("⚠️ Please enter an SMS message to analyze.")
 
@@ -271,27 +264,24 @@ if predict_clicked:
             prediction = model.predict(input_vector)[0]
             confidence = max(model.predict_proba(input_vector)[0]) * 100
 
-        # -------------------------------
         # Prediction result
-        # -------------------------------
+
         if prediction == "spam":
             st.error("🚨 Prediction: SPAM")
         else:
             st.success("✅ Prediction: HAM (Not Spam)")
 
-        # -------------------------------
         # Confidence indicator
-        # -------------------------------
         if confidence >= 80:
             st.success(f"🟢 High confidence ({confidence:.2f}%)")
-        elif confidence >= 60:
+        elif confidence >= 70:
             st.info(f"🟡 Medium confidence ({confidence:.2f}%)")
         else:
             st.warning(f"🔴 Low confidence ({confidence:.2f}%)")
 
-        # -------------------------------
+       
         # Color-coded contributing words
-        # -------------------------------
+   
         words = get_colored_contributing_words(message, vectorizer, model)
 
         if words:
@@ -308,9 +298,9 @@ if predict_clicked:
 
 
 
-# -------------------------------------------------
-# Model info (verification-friendly)
-# -------------------------------------------------
+
+# Model info 
+
 st.markdown("---")
 st.subheader("Model Information")
 st.write(f"- Algorithm: Multinomial Naive Bayes")
