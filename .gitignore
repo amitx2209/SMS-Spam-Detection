@@ -5,3 +5,7 @@ __pycache__/
 # Virtual environments
 venv/
 .env
+
+spam_project/
+*.h5
+*.pkl
