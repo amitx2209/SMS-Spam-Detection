@@ -1,6 +1,7 @@
-streamlit>=1.32
-altair==4.2.2
+streamlit
+tensorflow==2.15.0
+keras
 scikit-learn
-pandas
 numpy
-nltk
+pandas
+pickle-mixin
