@@ -59,8 +59,7 @@ def load_models():
     except Exception as e:
         st.error("Tokenizer Load Error")
         st.exception(e)
-        st.stop()   
-     )
+        st.stop()
 
     # Load LSTM model
     try:
