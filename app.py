@@ -25,7 +25,6 @@ st.set_page_config(
 @st.cache_resource
 def load_models():
 
-```
 import os
 import tensorflow as tf
 
@@ -63,7 +62,6 @@ except Exception as e:
     st.stop()
 
 return nb_model, vectorizer, lstm_model, tokenizer
-```
 
 nb_model, vectorizer, lstm_model, tokenizer = load_models()
 
