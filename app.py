@@ -17,18 +17,53 @@ st.set_page_config(
 )
 
 # -----------------------------
+
 # Load Models
+
 # -----------------------------
+
 @st.cache_resource
 def load_models():
-    nb_model = pickle.load(open("spam_model.pkl", "rb"))
-    vectorizer = pickle.load(open("tfidf_vectorizer.pkl", "rb"))
 
-    lstm_model = load_model("lstm_model.h5", compile=False)
-    tokenizer = pickle.load(open("tokenizer.pkl", "rb"))
+```
+import os
+import tensorflow as tf
 
-    return nb_model, vectorizer, lstm_model, tokenizer
+st.sidebar.write(f"TensorFlow: {tf.__version__}")
+st.sidebar.write(f"Working Dir: {os.getcwd()}")
 
+# Verify files exist
+required_files = [
+    "spam_model.pkl",
+    "tfidf_vectorizer.pkl",
+    "tokenizer.pkl",
+    "lstm_model.h5"
+]
+
+for file in required_files:
+    if not os.path.exists(file):
+        st.error(f"Missing file: {file}")
+        st.stop()
+
+# Load Naive Bayes components
+nb_model = pickle.load(open("spam_model.pkl", "rb"))
+vectorizer = pickle.load(open("tfidf_vectorizer.pkl", "rb"))
+tokenizer = pickle.load(open("tokenizer.pkl", "rb"))
+
+# Load LSTM model
+try:
+    lstm_model = load_model(
+        "lstm_model.h5",
+        compile=False
+    )
+
+except Exception as e:
+    st.error("Failed to load LSTM model")
+    st.exception(e)
+    st.stop()
+
+return nb_model, vectorizer, lstm_model, tokenizer
+```
 
 nb_model, vectorizer, lstm_model, tokenizer = load_models()
 
