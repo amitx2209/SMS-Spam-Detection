@@ -24,7 +24,7 @@ def load_models():
     nb_model = pickle.load(open("spam_model.pkl", "rb"))
     vectorizer = pickle.load(open("tfidf_vectorizer.pkl", "rb"))
 
-    lstm_model = load_model("lstm_model.h5")
+    lstm_model = load_model("lstm_model.h5", compile=False)
     tokenizer = pickle.load(open("tokenizer.pkl", "rb"))
 
     return nb_model, vectorizer, lstm_model, tokenizer
