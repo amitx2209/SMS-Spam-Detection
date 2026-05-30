@@ -25,43 +25,49 @@ st.set_page_config(
 @st.cache_resource
 def load_models():
 
-import os
-import tensorflow as tf
+    import os
+    import tensorflow as tf
 
-st.sidebar.write(f"TensorFlow: {tf.__version__}")
-st.sidebar.write(f"Working Dir: {os.getcwd()}")
+    st.sidebar.write(f"TensorFlow: {tf.__version__}")
+    st.sidebar.write(f"Working Dir: {os.getcwd()}")
 
-# Verify files exist
-required_files = [
-    "spam_model.pkl",
-    "tfidf_vectorizer.pkl",
-    "tokenizer.pkl",
-    "lstm_model.h5"
-]
+    # Verify files exist
+    required_files = [
+        "spam_model.pkl",
+        "tfidf_vectorizer.pkl",
+        "tokenizer.pkl",
+        "lstm_model.h5"
+    ]
 
-for file in required_files:
-    if not os.path.exists(file):
-        st.error(f"Missing file: {file}")
-        st.stop()
+    for file in required_files:
+        if not os.path.exists(file):
+            st.error(f"Missing file: {file}")
+            st.stop()
 
-# Load Naive Bayes components
-nb_model = pickle.load(open("spam_model.pkl", "rb"))
-vectorizer = pickle.load(open("tfidf_vectorizer.pkl", "rb"))
-tokenizer = pickle.load(open("tokenizer.pkl", "rb"))
+    # Load Naive Bayes components
+    nb_model = pickle.load(open("spam_model.pkl", "rb"))
 
-# Load LSTM model
-try:
-    lstm_model = load_model(
-        "lstm_model.h5",
-        compile=False
+    vectorizer = pickle.load(
+        open("tfidf_vectorizer.pkl", "rb")
     )
 
-except Exception as e:
-    st.error("Failed to load LSTM model")
-    st.exception(e)
-    st.stop()
+    tokenizer = pickle.load(
+        open("tokenizer.pkl", "rb")
+    )
 
-return nb_model, vectorizer, lstm_model, tokenizer
+    # Load LSTM model
+    try:
+        lstm_model = load_model(
+            "lstm_model.h5",
+            compile=False
+        )
+
+    except Exception as e:
+        st.error("Failed to load LSTM model")
+        st.exception(e)
+        st.stop()
+
+    return nb_model, vectorizer, lstm_model, tokenizer
 
 nb_model, vectorizer, lstm_model, tokenizer = load_models()
 
