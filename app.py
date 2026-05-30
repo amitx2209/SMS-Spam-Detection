@@ -51,9 +51,16 @@ def load_models():
         open("tfidf_vectorizer.pkl", "rb")
     )
 
-    tokenizer = pickle.load(
-        open("tokenizer.pkl", "rb")
-    )
+    try:
+        tokenizer = pickle.load(
+            open("tokenizer.pkl", "rb")
+        )
+
+    except Exception as e:
+        st.error("Tokenizer Load Error")
+        st.exception(e)
+        st.stop()   
+     )
 
     # Load LSTM model
     try:
